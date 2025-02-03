@@ -21,6 +21,8 @@ from llama_index.core.tools import FunctionTool
 from llama_index.llms.openai import OpenAI
 
 #Load environment variables from .env file
+load_dotenv()
+API_KEY = os.getenv("OPEN_AI_KEY")
 
 def StockAns (stock: str) -> str :
     # Ticker del activo
@@ -381,7 +383,7 @@ Financial_Analysis_tool = FunctionTool.from_defaults(fn=StockAns)
 
 #Crear workers y agentes
 Worker1 = FunctionCallingAgentWorker.from_tools(Financial_Analysis_tool)
-Worker2 = FunctionCallingAgentWorker.from_tools(None)
+Worker2 = FunctionCallingAgentWorker.from_tools([], llm=OpenAI)
 Agent1 = Worker1.as_agent()
 Agent2 = Worker2.as_agent()
 
@@ -391,7 +393,7 @@ queue_client = message_queue.client
 
 control_plane = ControlPlaneServer(
     message_queue=queue_client,
-    orchestrator = AgentOrchestrator(llm=None),
+    orchestrator = AgentOrchestrator(llm=OpenAI),
 )
 Agent_server_1 = AgentService(
     agent=Agent1,
