@@ -380,8 +380,8 @@ def StockAns (stock: str) -> str :
 Financial_Analysis_tool = FunctionTool.from_defaults(fn=StockAns)
 
 #Crear workers y agentes
-Worker1 = FunctionCallingAgentWorker.from_tools(Financial_Analysis_tool, llm=None)
-Worker2 = FunctionCallingAgentWorker.from_tools(None,llm=OpenAI())
+Worker1 = FunctionCallingAgentWorker.from_tools(Financial_Analysis_tool)
+Worker2 = FunctionCallingAgentWorker.from_tools(None)
 Agent1 = Worker1.as_agent()
 Agent2 = Worker2.as_agent()
 
