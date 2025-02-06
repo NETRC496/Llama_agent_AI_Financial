@@ -382,8 +382,8 @@ def StockAns (stock: str) -> str :
 Financial_Analysis_tool = FunctionTool.from_defaults(fn=StockAns)
 
 #Crear workers y agentes
-Worker1 = FunctionCallingAgentWorker.from_tools(Financial_Analysis_tool)
-Worker2 = FunctionCallingAgentWorker.from_tools([], llm=OpenAI)
+Worker1 = FunctionCallingAgentWorker.from_tools({Financial_Analysis_tool}, llm=OpenAI())
+Worker2 = FunctionCallingAgentWorker.from_tools(llm=OpenAI())
 Agent1 = Worker1.as_agent()
 Agent2 = Worker2.as_agent()
 
@@ -399,6 +399,7 @@ Agent_server_1 = AgentService(
     agent=Agent1,
     message_queue=queue_client,
     description="Brinda información sobre los activos, sus rendimientos y riesgos de inversión.",
+    prompt='Indagar en el texto otorgado los tickers al mencionarse una empresa',
     service_name="Financial_Analysis_Agent",
     host="127.0.0.1",
     port=8002,
@@ -423,11 +424,5 @@ launcher = ServerLauncher(
     message_queue,
     additional_consumers=[human_consumer],
 )
-import nest_asyncio
-import asyncio
 
-nest_asyncio.apply()
-
-async def main():
-    await launcher.launch_servers()
-asyncio.run(main())
+launcher.launch_servers()
